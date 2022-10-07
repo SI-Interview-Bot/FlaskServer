@@ -17,22 +17,47 @@ def parseData():
 
     newJSONObject = dict()
 
+    ################
     # Parse data from POST request
+    ################
     data = request.get_data()
     data = json.loads(data)
 
+    ################
     # Parse relevant interview data and create new JSON object to return and POST to a webhook
-    newJSONObject['name'] = data['issue']['summary']
-    newJSONObject['interviewType']    = data['changelog']['items'][0]['field']
-    newJSONObject['dateTime']       = data['issue']['fields']['customfield_10003']
+    ################
+    # Expected format: "summary": "firstName lastName"
+    newJSONObject['name'] = data['issue']['fields']['summary']
+    if not newJSONObject['name']:
+        newJSONObject['name'] = "Not Given In JIRA"
+    
+    # Expected format: "field": "Type of Interview"
+    newJSONObject['interviewType'] = data['changelog']['items'][0]['field']
+    if not newJSONObject['interviewType']:
+        newJSONObject['interviewType'] = "Not Given In JIRA"
+    
+    # Expected format: "customfield_10003": "2022-10-07T19:30:00.000-0400"
+    newJSONObject['dateTime'] = data['issue']['fields']['customfield_10003']
+    if not newJSONObject['dateTime']:
+        newJSONObject['dateTime'] = "Not Given In JIRA"
+        date = "Not Given In JIRA"
+        time = "Not Given In JIRA"
+    else:
+        # Get date from dateTime string
+        date = newJSONObject['dateTime'].split('T')[0]
+        # Get time from dateTime string
+        time = newJSONObject['dateTime'].split('T')[1].split('.')[0]
+    # Expected format: "key": "CT-####"
     newJSONObject['JIRATicketNumber'] = data['issue']['key']
-    # TODO customfield_10003 will be used for date/time of interview
+    if not newJSONObject['JIRATicketNumber']:
+        newJSONObject['JIRATicketNumber'] = "Not Given In JIRA"
 
-    stdout.write(f"[+] name=={newJSONObject['name']}\n")
-    stdout.write(f"[+] interviewType=={newJSONObject['interviewType']}\n")
-    date = newJSONObject['dateTime'].split('T')[0]
-    time = newJSONObject['dateTime'].split('T')[1]
-    stdout.write(f"[+] dateTime=={date} at {time}\n")
-    stdout.write(f"[+] JIRATicketNumber=={newJSONObject['JIRATicketNumber']}\n")
+    stdout.write(f"JIRA Ticket:    {newJSONObject['JIRATicketNumber']}\n")
+    stdout.write(f"Candidate Name: {newJSONObject['name']}\n")
+    stdout.write(f"Interview Type: {newJSONObject['interviewType']}\n")
+    stdout.write(f"Date: {date}\n")
+    stdout.write(f"Time: {time}\n")
 
-    return f"[+] OK.\n"
+    stdout.write(f"[+] Parsing complete.\n")
+
+    return f"{newJSONObject}\n"
