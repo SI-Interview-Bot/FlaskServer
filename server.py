@@ -18,7 +18,7 @@ def extract_interview_date_time_data(ret_json: dict, incoming_json: dict) -> Tup
     producing a JSON object without that data, it could be formatted differently.
     server.py is expecting the value of this field to be delimited by a "T". Check if
     the date time format has changed in the JSON produced by JIRA's webhook and update
-    how we prase that here.
+    how we parse that here.
 
     Expected format: "customfield_10003": "2022-10-07T19:30:00.000-0400"
     '''
@@ -47,6 +47,8 @@ def extract_name_data(ret_json: dict, incoming_json: dict) -> None:
 
 def recieve_data(incoming_json) -> dict:
     '''
+    TODO: Wyatt, what is this supposed to do?
+    Why does it take a parameter that its not using?
     '''
     incoming_data = request.get_data()
     return json.loads(incoming_data)
@@ -76,14 +78,14 @@ def extract_jira_ticket_data(ret_json: dict, incoming_json: dict) -> None:
 @app.route('/issue-update', methods=['POST'])
 def parse_data() -> str:
     '''
-    parseData          - Takes a JSON Object from a JIRA webhook and parses information to
-                         build another JSON Object in response.
-    IN:  HTTP POST     - Handled by Flask
-    OUT: newJSONObject - The JSON Object built with JIRA's JSON Object. We parse it here with
-                         a specific format expected. Should the returned JSON Object start to
-                         look weird, or just straight up useless, it could be that JIRA's
-                         JSON Object has changed its formatting in such a way that we can no
-                         longer parse it.
+    parseData            - Takes a JSON Object from a JIRA webhook and parses information to
+                           build another JSON Object in response.
+    IN:  HTTP POST       - Handled by Flask
+    OUT: ret_json_object - The JSON Object built with JIRA's JSON Object. We parse it here with
+                           a specific format expected. Should the returned JSON Object start to
+                           look weird, or just straight up useless, it could be that JIRA's
+                           JSON Object has changed its formatting in such a way that we can no
+                           longer parse it.
     '''
 
     ret_json_object = dict()
