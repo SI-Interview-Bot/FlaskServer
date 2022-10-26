@@ -17,3 +17,9 @@ The project requires the following dependencies.
 Clone the repo to your local machine.
 
 ### TODO: Testing
+## Testing
+
+To test the flask server.py, open a new terminal and type:
+`flask --app server.py run -p 8088`
+In another terminal:
+`./run_webhook_test`
