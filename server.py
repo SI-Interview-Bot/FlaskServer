@@ -1,16 +1,32 @@
 '''
-Used to listen for webhooks from Jira on Orion to update InterviewBot.
+Used to listen for webhooks from Jira on Orion to update InterviewBot's Flask server.
 '''
 
 # Standard imports
 import json
+import requests
+
+from os import environ
+from sys import stdout
 from typing import Tuple
 
 # Non-standard imports
 from flask import Flask, request
 
+# flask --app 'server:init("https://someUrlFollowedByAPort:5000")' run
+# End point names
+RECEIVE_JIRA_JSON = "receive-JIRA-JSON"
+ISSUE_UPDATE = "issue-update"
+
 app = Flask(__name__)
 
+# Get IP and PORT of Slack Bot from environmental variables
+try:
+    DESTINATION = environ['SLACKBOT_IP_PORT']
+except:
+    DESTINATION = f"http://localhost:5000" # Default IP and PORT
+finally:
+    stdout.write(f"[i] Sending POST requests to {DESTINATION}\n")
 
 def extract_interview_date_time_data(ret_json: dict, incoming_json: dict) -> Tuple[str, str]:
     '''
@@ -23,29 +39,57 @@ def extract_interview_date_time_data(ret_json: dict, incoming_json: dict) -> Tup
     Expected format: "customfield_10003": "2022-10-07T19:30:00.000-0400"
     '''
     try:
-        ret_json['dateTime'] = incoming_json['issue']['fields']['customfield_10003']
-
-        date = ret_json['dateTime'].split('T')[0]
-        time = ret_json['dateTime'].split('T')[1].split('.')[0]
+        if incoming_json['issue']['fields']['customfield_10003'] is not None:
+            ret_json['dateTime'] = incoming_json['issue']['fields']['customfield_10003']
+            date = ret_json['dateTime'].split('T')[0]
+            time = ret_json['dateTime'].split('T')[1].split('.')[0]
+        else:
+            ret_json['dateTime'] = "NULL"
+            date = "NULL"
+            time = "NULL"
     except:
-        ret_json['dateTime'] = "NULL"
-        date = "NULL"
-        time = "NULL"
+        ret_json['dateTime'] = "extract_interview_date_time_data exception"
 
     return (date, time,)
-
 
 def extract_name_data(ret_json: dict, incoming_json: dict) -> None:
     '''
     Expected format: "summary": "firstName lastName"
     '''
-    if incoming_json['issue']['fields']['summary'].split(" ")[0] is not None:
-        ret_json['name'] = incoming_json['issue']['fields']['summary'].split(" ")[0]
-    else:
-        ret_json['name'] = "NULL"
+    try:
+        if incoming_json['issue']['fields']['summary'].split(" ")[0] is not None:
+            ret_json['name'] = incoming_json['issue']['fields']['summary'].split(" ")[0]
+        else:
+            ret_json['name'] = "NULL"
+    except:
+        ret_json['name'] = "extract_name_data exception"
 
+def extract_interview_type_data(ret_json: dict, incoming_json: dict) -> None:
+    '''
+    The type of interview: Phone, Face-to-Face, etc.
+    Expected format: "field": "Type of Interview"
+    '''
+    try:
+        if incoming_json['changelog']['items'][0]['field'] is not None:
+            ret_json['interviewType'] = incoming_json['changelog']['items'][0]['field']
+        else:
+            ret_json['interviewType'] = "NULL"
+    except:
+        ret_json['interviewType'] = "extract_interview_type_data exception"
 
-def recieve_data(incoming_json) -> dict:
+def extract_jira_ticket_data(ret_json: dict, incoming_json: dict) -> None:
+    '''
+    Expected format: "key": "CT-####"
+    '''
+    try:
+        if incoming_json['issue']['key'] is not None:
+            ret_json['JIRATicketNumber'] = incoming_json['issue']['key']
+        else:
+            ret_json['JIRATicketNumber'] = "NULL"
+    except:
+        ret_json['JIRATicketNumber'] = "extract_jira_ticket_data exception"
+
+def receive_data() -> dict:
     '''
     TODO: Wyatt, what is this supposed to do?
     Why does it take a parameter that its not using?
@@ -53,32 +97,10 @@ def recieve_data(incoming_json) -> dict:
     incoming_data = request.get_data()
     return json.loads(incoming_data)
 
-
-def extract_interview_type_data(ret_json: dict, incoming_json: dict) -> None:
-    '''
-    The type of interview: Phone, Face-to-Face, etc.
-    Expected format: "field": "Type of Interview"
-    '''
-    if incoming_json['changelog']['items'][0]['field'] is not None:
-        ret_json['interviewType'] = incoming_json['changelog']['items'][0]['field']
-    else:
-        ret_json['interviewType'] = "NULL"    
-
-
-def extract_jira_ticket_data(ret_json: dict, incoming_json: dict) -> None:
-    '''
-    Expected format: "key": "CT-####"
-    '''
-    if incoming_json['issue']['key'] is not None:
-        ret_json['JIRATicketNumber'] = incoming_json['issue']['key']
-    else:
-        ret_json['JIRATicketNumber'] = "NULL"
-
-
-@app.route('/issue-update', methods=['POST'])
+@app.route(f'/{ISSUE_UPDATE}', methods=['POST'])
 def parse_data() -> str:
     '''
-    parseData            - Takes a JSON Object from a JIRA webhook and parses information to
+    parse_data           - Takes a JSON Object from a JIRA webhook and parses information to
                            build another JSON Object in response.
     IN:  HTTP POST       - Handled by Flask
     OUT: ret_json_object - The JSON Object built with JIRA's JSON Object. We parse it here with
@@ -87,9 +109,9 @@ def parse_data() -> str:
                            JSON Object has changed its formatting in such a way that we can no
                            longer parse it.
     '''
-
     ret_json_object = dict()
-    incoming_json_object = recieve_data(request.get_data())
+    incoming_json_object = receive_data()
+    stdout.write(f"[+] Received /{ISSUE_UPDATE} POST.\n")
 
     extract_name_data(ret_json=ret_json_object,
                       incoming_json=incoming_json_object)
@@ -103,5 +125,13 @@ def parse_data() -> str:
 
     extract_jira_ticket_data(ret_json=ret_json_object,
                              incoming_json=incoming_json_object)
+
+    # Send a POST request to the URL of the bot's Flask server with our clean JSON object
+    try:
+        response = requests.post(f'{DESTINATION}/{RECEIVE_JIRA_JSON}', json=ret_json_object)
+        if "200" not in response.text:
+            stdout.write(f"[X] Failed to send POST request. POST Response was: {response}\n")
+    except Exception as error:
+        stdout.write(f"[X] Failed to send POST request. Error:{error}\n")
 
     return f"{ret_json_object}\n"
