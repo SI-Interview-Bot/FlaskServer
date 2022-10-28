@@ -2,24 +2,24 @@
 
 ## Development Environment
 
-The project requires the following dependencies.
+We will use Docker Engine to manage all dependencies for development and deployment of our solution.
 
-1. Install `python3`:
-    - `sudo apt install python3`
-2. Install `pip3`:
-    - `sudo apt install python3-pip`
-3. Install `flask`:
-    - `pip3 install Flask`
-    - `sudo apt install python3-flask`
-4. Install `curl`:
-    - `sudo apt install curl`
+1. Install `git`:
+    - Follow: https://www.digitalocean.com/community/tutorials/how-to-install-git-on-centos-7
+3. Install `Docker`:
+    - Follow: https://docs.docker.com/engine/install/centos/
+4. Install `docker-compose`
+    - Follow: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04
 
 Clone the repo to your local machine.
+`git clone <xxx>`
 
-### TODO: Testing
+## Generate Docker image
+1. `docker build -t json_cleaner_image:latest .`
+
 ## Testing
 
-1. To test the flask server.py, open a new terminal and type:
-    - `flask --app server.py run -p 8088`
-2. In another terminal:
+1. In a terminal:
+    - `docker-compose up`
+2. In another terminal, if the process started by the last command was not detached:
     - `./run_webhook_test`
