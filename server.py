@@ -1,20 +1,20 @@
 '''
-Used to listen for webhooks from Jira on Orion to update InterviewBot's Flask server.
+Used to listen for webhooks from Jira on Orion to update InterviewBot.
 '''
 
 # Standard imports
 import json
-import requests
 
 from os import environ
 from sys import stdout
 from typing import Tuple
 
 # Non-standard imports
+import requests
+
 from flask import Flask, request
 
-# flask --app 'server:init("https://someUrlFollowedByAPort:5000")' run
-# End point names
+# REST API/End-points
 RECEIVE_JIRA_JSON = "receive-JIRA-JSON"
 ISSUE_UPDATE = "issue-update"
 
@@ -91,8 +91,7 @@ def extract_jira_ticket_data(ret_json: dict, incoming_json: dict) -> None:
 
 def receive_data() -> dict:
     '''
-    TODO: Wyatt, what is this supposed to do?
-    Why does it take a parameter that its not using?
+    Receives and parses the JSON object into a dict()
     '''
     incoming_data = request.get_data()
     return json.loads(incoming_data)
