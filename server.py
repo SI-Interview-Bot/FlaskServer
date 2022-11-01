@@ -128,9 +128,10 @@ def parse_data() -> str:
     # Send a POST request to the bot's end-point with our clean JSON object
     try:
         response = requests.post(f'{DESTINATION}/{RECEIVE_JIRA_JSON}', json=ret_json_object)
-        if "200" not in response.text:
-            stdout.write(f"[X] Failed to send POST request. POST Response was: {response}\n")
-            return f"[X] Failed to send POST request. POST Response was: {response}\n"
+        # If POST request failed,
+        if 200 != response.status_code:
+            stdout.write(f"[X] Failed to send POST request. POST Response was: {response.status_code}\n")
+            return f"[X] Failed to send POST request. POST Response was: {response.status_code}\n"
         else:
             stdout.write(f"[+] Sent POST request to {DESTINATION}/{RECEIVE_JIRA_JSON}\n")
             return f"[+] Sent POST request to {DESTINATION}/{RECEIVE_JIRA_JSON}\n"
