@@ -19,7 +19,8 @@ Clone the repo to your local machine.
 
 ## Testing
 
-1. In a terminal:
+1. Update docker-compose.yaml file to use the bot's IP and PORT after bot is deployed.
+2. In a terminal:
     - `docker-compose up`
-2. In another terminal, if the process started by the last command was not detached:
+3. In another terminal, if the process started by the last command was not detached:
     - `./run_webhook_test`
