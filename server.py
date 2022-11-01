@@ -5,8 +5,8 @@ Used to listen for webhooks from Jira on Orion to update InterviewBot.
 # Standard imports
 import json
 
-from os import environ
-from sys import stdout
+from os     import environ
+from sys    import stdout
 from typing import Tuple
 
 # Non-standard imports
@@ -16,7 +16,7 @@ from flask import Flask, request
 
 # REST API/End-points
 RECEIVE_JIRA_JSON = "receive-JIRA-JSON"
-ISSUE_UPDATE = "issue-update"
+ISSUE_UPDATE      = "issue-update"
 
 app = Flask(__name__)
 
@@ -125,12 +125,18 @@ def parse_data() -> str:
     extract_jira_ticket_data(ret_json=ret_json_object,
                              incoming_json=incoming_json_object)
 
-    # Send a POST request to the URL of the bot's Flask server with our clean JSON object
+    # Send a POST request to the bot's end-point with our clean JSON object
     try:
         response = requests.post(f'{DESTINATION}/{RECEIVE_JIRA_JSON}', json=ret_json_object)
-        if "200" not in response.text:
-            stdout.write(f"[X] Failed to send POST request. POST Response was: {response}\n")
+        # If POST request failed,
+        if 200 != response.status_code:
+            stdout.write(f"[X] Failed to send POST request. POST Response was: {response.status_code}\n")
+            return f"[X] Failed to send POST request. POST Response was: {response.status_code}\n"
+        else:
+            stdout.write(f"[+] Sent POST request to {DESTINATION}/{RECEIVE_JIRA_JSON}\n")
+            return f"[+] Sent POST request to {DESTINATION}/{RECEIVE_JIRA_JSON}\n"
     except Exception as error:
         stdout.write(f"[X] Failed to send POST request. Error:{error}\n")
+        return f"[X] Failed to send POST request. Error:{error}\n"
 
     return f"{ret_json_object}\n"
