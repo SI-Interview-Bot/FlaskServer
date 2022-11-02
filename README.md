@@ -30,3 +30,6 @@ Clone the repo to your local machine.
 If you are deploying on a machine using a proxy server, configure Docker to use the proxy server:
 https://docs.docker.com/config/daemon/systemd/
 
+To build the Docker image use a similar command:
+`docker build  --no-cache --build-arg HTTP_PROXY=http://xx.xx.xx.xx:xx --build-arg HTTPS_PROXY=http://xx.xx.xx.xx:xx -t json_cleaner_image .`
+This is required so that once `pip` is installed and begins downloading the required modules in `requirements.txt` pip can also use the proxy server.
