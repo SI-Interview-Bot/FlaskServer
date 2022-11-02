@@ -24,3 +24,9 @@ Clone the repo to your local machine.
     - `docker-compose up`
 3. In another terminal, if the process started by the last command was not detached:
     - `./run_webhook_test`
+
+## Deployment
+
+If you are deploying on a machine using a proxy server, configure Docker to use the proxy server:
+https://docs.docker.com/config/daemon/systemd/
+
