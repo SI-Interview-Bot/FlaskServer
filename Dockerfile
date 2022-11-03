@@ -3,7 +3,7 @@ FROM python:latest
 COPY server.py /
 COPY ./requirements.txt /requirements.txt
 
-RUN pip install -r /requirements.txt
+RUN pip install --trusted-host pypi.org -r /requirements.txt
 
 EXPOSE 8088
 
