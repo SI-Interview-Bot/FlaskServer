@@ -89,18 +89,29 @@ def extract_jira_ticket_data(ret_json: dict, incoming_json: dict) -> None:
     except:
         ret_json['JIRATicketNumber'] = "extract_jira_ticket_data exception"
 
-def extract_position_type_data(ret_json: dict, incoming_json: dict) -> None:
+def extract_functional_role_data(ret_json: dict, incoming_json: dict) -> None:
     '''
-    Expected format: TODO: We need to generate a new JSON sample from JIRA with the field
-    containing this information about the interview.
+    Expected format: "customfield_10008": "value": "Some single string value"
     '''
     try:
-        if incoming_json['TODO'] is not None:
-            ret_json['PositionType'] = incoming_json['TODO']
+        if incoming_json['issue']['fields']['customfield_10008'] is not None:
+            ret_json['FunctionalRole'] = incoming_json['issue']['fields']['customfield_10008']['value']
         else:
-            ret_json['PositionType'] = "NULL"
+            ret_json['FunctionalRole'] = "NULL"
     except:
-        ret_json['PositionType'] = "extract_position_type_data exception"
+        ret_json['FunctionalRole'] = "extract_functional_role_data exception"
+
+def extract_component_data(ret_json: dict, incoming_json: dict) -> None:
+    '''
+    Expected format: "components": ["List", "of", "values", "could", "be", "empty", "list"]
+    '''
+    try:
+        if incoming_json['issue']['fields']['components'] is not None:
+            ret_json['Component'] = incoming_json['issue']['fields']['components']
+        else:
+            ret_json['Component'] = "NULL"
+    except:
+        ret_json['Component'] = "extract_component_data exception"
 
 def receive_data() -> dict:
     '''
@@ -126,18 +137,17 @@ def parse_data() -> str:
     stdout.write(f"[+] Received /{ISSUE_UPDATE} POST.\n")
 
     extract_name_data(ret_json=ret_json_object, incoming_json=incoming_json_object)
-
     extract_interview_type_data(ret_json=ret_json_object,
                                 incoming_json=incoming_json_object)
-
     # Unused
     date, time = extract_interview_date_time_data(ret_json=ret_json_object,
                                                   incoming_json=incoming_json_object)
-
     extract_jira_ticket_data(ret_json=ret_json_object, incoming_json=incoming_json_object)
-    
-    extract_position_type_data(ret_json=ret_json_object,
-                               incoming_json=incoming_json_object)
+    extract_functional_role_data(ret_json=ret_json_object,
+                                 incoming_json=incoming_json_object)
+    extract_component_data(ret_json=ret_json_object, incoming_json=incoming_json_object)
+
+    stdout.write(f"\n{ret_json_object}\n\n")
 
     # Send a POST request to the bot's end-point with our clean JSON object
     try:
