@@ -3,7 +3,7 @@
     "webhookEvent": "jira:issue_updated",
     "issue_event_type_name": "issue_updated",
     "user": {
-        "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40raytheon.com",
+        "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40someCompany.com",
         "name": "some.employee@someCompany.com",
         "key": "some.employee@someCompany.com",
         "emailAddress": "some.employee@someCompany.com",
@@ -75,7 +75,7 @@
             },
             "created": "2021-05-03T14:53:41.000-0400",
             "customfield_10100": {
-                "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40raytheon.com",
+                "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40someCompany.com",
                 "name": "some.employee@someCompany.com",
                 "key": "some.employee@someCompany.com",
                 "emailAddress": "some.employee@someCompany.com",
@@ -108,7 +108,7 @@
             "customfield_10814": null,
             "issuelinks": [],
             "assignee": {
-                "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40raytheon.com",
+                "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40someCompany.com",
                 "name": "some.employee@someCompany.com",
                 "key": "some.employee@someCompany.com",
                 "emailAddress": "some.employee@someCompany.com",
@@ -137,7 +137,7 @@
                     "name": "In Progress"
                 }
             },
-            "components": [],
+            "components": ["Engineering-Developer"],
             "timeoriginalestimate": null,
             "description": null,
             "customfield_10211": [
@@ -153,11 +153,11 @@
             "customfield_10601": null,
             "customfield_10008": {
                 "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/customFieldOption/10018",
-                "value": "Other",
+                "value": "Engineering-Developer",
                 "id": "10018"
             },
             "customfield_10206": {
-                "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40raytheon.com",
+                "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40someCompany.com",
                 "name": "some.employee@someCompany.com",
                 "key": "some.employee@someCompany.com",
                 "emailAddress": "some.employee@someCompany.com",
@@ -193,7 +193,7 @@
             "customfield_10809": null,
             "summary": "HM Test",
             "creator": {
-                "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40raytheon.com",
+                "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40someCompany.com",
                 "name": "some.employee@someCompany.com",
                 "key": "some.employee@someCompany.com",
                 "emailAddress": "some.employee@someCompany.com",
@@ -209,7 +209,7 @@
             },
             "subtasks": [],
             "reporter": {
-                "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40raytheon.com",
+                "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40someCompany.com",
                 "name": "some.employee@someCompany.com",
                 "key": "some.employee@someCompany.com",
                 "emailAddress": "some.employee@someCompany.com",
@@ -251,7 +251,7 @@
                         "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/issue/17720/comment/37883",
                         "id": "37883",
                         "author": {
-                            "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40raytheon.com",
+                            "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40someCompany.com",
                             "name": "some.employee@someCompany.com",
                             "key": "some.employee@someCompany.com",
                             "emailAddress": "some.employee@someCompany.com",
@@ -267,7 +267,7 @@
                         },
                         "body": "Putting on Hold for further testing. ;P",
                         "updateAuthor": {
-                            "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40raytheon.com",
+                            "self": "https://csi-recruiting.mlb02.us.ray.com/jira/rest/api/2/user?username=some.employee%40someCompany.com",
                             "name": "some.employee@someCompany.com",
                             "key": "some.employee@someCompany.com",
                             "emailAddress": "some.employee@someCompany.com",
