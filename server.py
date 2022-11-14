@@ -89,6 +89,19 @@ def extract_jira_ticket_data(ret_json: dict, incoming_json: dict) -> None:
     except:
         ret_json['JIRATicketNumber'] = "extract_jira_ticket_data exception"
 
+def extract_position_type_data(ret_json: dict, incoming_json: dict) -> None:
+    '''
+    Expected format: TODO: We need to generate a new JSON sample from JIRA with the field
+    containing this information about the interview.
+    '''
+    try:
+        if incoming_json['TODO'] is not None:
+            ret_json['PositionType'] = incoming_json['TODO']
+        else:
+            ret_json['PositionType'] = "NULL"
+    except:
+        ret_json['PositionType'] = "extract_position_type_data exception"
+
 def receive_data() -> dict:
     '''
     Receives and parses the JSON object into a dict()
@@ -112,8 +125,7 @@ def parse_data() -> str:
     incoming_json_object = receive_data()
     stdout.write(f"[+] Received /{ISSUE_UPDATE} POST.\n")
 
-    extract_name_data(ret_json=ret_json_object,
-                      incoming_json=incoming_json_object)
+    extract_name_data(ret_json=ret_json_object, incoming_json=incoming_json_object)
 
     extract_interview_type_data(ret_json=ret_json_object,
                                 incoming_json=incoming_json_object)
@@ -122,8 +134,10 @@ def parse_data() -> str:
     date, time = extract_interview_date_time_data(ret_json=ret_json_object,
                                                   incoming_json=incoming_json_object)
 
-    extract_jira_ticket_data(ret_json=ret_json_object,
-                             incoming_json=incoming_json_object)
+    extract_jira_ticket_data(ret_json=ret_json_object, incoming_json=incoming_json_object)
+    
+    extract_position_type_data(ret_json=ret_json_object,
+                               incoming_json=incoming_json_object)
 
     # Send a POST request to the bot's end-point with our clean JSON object
     try:
