@@ -147,20 +147,25 @@ def parse_data() -> str:
                                  incoming_json=incoming_json_object)
     extract_component_data(ret_json=ret_json_object, incoming_json=incoming_json_object)
 
-    stdout.write(f"\n{ret_json_object}\n\n")
-
     # Send a POST request to the bot's end-point with our clean JSON object
     try:
         response = requests.post(f'{DESTINATION}/{RECEIVE_JIRA_JSON}', json=ret_json_object)
         # If POST request failed,
         if 200 != response.status_code:
             stdout.write(f"[X] Failed to send POST request. POST Response was: {response.status_code}\n")
-            return f"[X] Failed to send POST request. POST Response was: {response.status_code}\n"
         else:
             stdout.write(f"[+] Sent POST request to {DESTINATION}/{RECEIVE_JIRA_JSON}\n")
-            return f"[+] Sent POST request to {DESTINATION}/{RECEIVE_JIRA_JSON}\n"
+
+        stdout.write(f"\n[i] JSON\n{ret_json_object}\n")
+        stdout.write(f"\n[i] Response\n{response.status_code}\n")
+        with open("stderr.log", "a") as log:
+            log.write(f"\n[i] JSON\n{ret_json_object}\n")
+            log.write(f"\n[i] Reponse\n{response.status_code}\n")
+
     except Exception as error:
         stdout.write(f"[X] Failed to send POST request. Error:{error}\n")
-        return f"[X] Failed to send POST request. Error:{error}\n"
+        with open("stderr.log", "a") as log:
+            log.write(f"\n[i] JSON\n{ret_json_object}\n")
+            log.write(f"\n[i] Error\n{error}\n")
 
     return f"{ret_json_object}\n"
